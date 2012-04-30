@@ -19,5 +19,8 @@ This tool currently allows you to :
 5. Remove addresses
 6. Standardise phone number formats
 
-More features to be added.
+UPDATED :
 
+30-04-2012 : 
+Added support for command line parameters so you don't have to edit the script anymore
+Added a help string documenting usage

@@ -7,16 +7,14 @@ It provides a set of utilities, each of which is described below
 
 Note : The phone number formatting logic is specific to India, and you may want to change it to suit your needs
 
-
- Copyright 2011 Ankit Daftery
- All Rights Reserved
+This code is free and open-source, you may do with it as you please
 
 """
 
 import re
-from getopt import getopt
-from sys import argv
-
+import getopt
+import sys
+import os
 
 def remove_photos(infile):
 	"""
@@ -118,6 +116,16 @@ def remove_non_numbers(infile):
 				temp = []
 				within_contact=False
 				has_tel = False
+"""
+Sample usage
+"""
+"""
+remove_photos("00003.vcf")
+remove_addresses("00003.vcf")
+remove_non_fields("00003.vcf")
+remove_non_numbers("00003.vcf")
+cleanup_phones("00003.vcf")
+"""
 			elif (tel.search(i)):
 				has_tel = True
 		else:
@@ -145,16 +153,71 @@ def cleanup_phones(infile):
 		foobar.write(lines[i])
 	foobar.close()
 
+def get_file(filename):
+	"""
+	Get specified filename
+	If not specified, get a file from current directory
+	If not present, quit
+	"""
+	if filename != "":
+		return filename
+	else:
+		filename = None
+		files=os.listdir(os.getcwd())
+		for i in files:
+			if ".vcf" in i:
+				choice= raw_input("Do you want to clean up %s ? Enter yes or no\n"%(i))
+				if "y" in choice:
+					filename = i
+					return filename
+	if filename==None:
+		raise NameError
+
+def show_help():
+	"""
+	Show the help string
+	"""
+	print "This is the script to clean up Android Contacts of unwanted details"
+	print "The list of valid parameters are :"
+	print "--photos Remove unwanted photo information"
+	print "--addresses Remove URL link addresses to Google profiles"
+	print "--trash Remove garbage fields"
+	print "--numbers Remove entries which are links only and have no associated phone numbers"
+	print "--unify-phones Reformat all numbers to follow a fixed format"
+	print "--file=filename Specify a filename in the current directory to work with.If not specified,it will prompt the user to select a vcf file from the current directory"
+	print "Invoke this script thus :"
+	print "python android.csv --file=filename(optional) --parameters "
+
 def main(argv=None):
 	"""
-	Main execution string
+	Main execution flow, get command line options
 	"""
-"""
-Sample usage
-"""
+	if argv is None:
+		argv = sys.argv
+	try:
+		opts, args = getopt.getopt(sys.argv[1:], "", ["help","photos","addresses","trash","numbers","unify-phones","file="])
+	except getopt.error, msg:
+		print msg
+		show_help()
+		sys.exit(2)
+	opts = dict(opts)
+	if opts.has_key("--help"):
+		show_help()
+		sys.exit(2)
+	try:
+		filename = get_file(opts['--file'])
+	except NameError:
+		print "File name missing"
+		sys.exit(2)
+	if opts.has_key("--photos"):
+		remove_photos(filename)
+	if opts.has_key("--addresses"):
+		remove_addresses(filename)
+	if opts.has_key("--trash"):
+		remove_non_fields(filename)
+	if opts.has_key("--numbers"):
+		remove_non_numbers(filename)
+	
 
-remove_photos("00003.vcf")
-remove_addresses("00003.vcf")
-remove_non_fields("00003.vcf")
-remove_non_numbers("00003.vcf")
-cleanup_phones("00003.vcf")
+if __name__ == "__main__":
+	sys.exit(main())
