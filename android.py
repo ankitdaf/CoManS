@@ -186,7 +186,7 @@ def show_help():
 	print "--unify-phones Reformat all numbers to follow a fixed format"
 	print "--file=filename Specify a filename in the current directory to work with.If not specified,it will prompt the user to select a vcf file from the current directory"
 	print "Invoke this script thus :"
-	print "python android.csv --file=filename(optional) --parameters "
+	print "python android.py --file=filename(optional) --parameters "
 
 def main(argv=None):
 	"""
